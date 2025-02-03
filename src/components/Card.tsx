@@ -3,15 +3,17 @@
  * Component properties
  */
 interface CardComponentProps {
+    key: number,
     imageUrl: string,
     contentTitle: string,
     contentDescription: string
+    contentUrl: string
 }
 
 
-const Card = ({ contentTitle, contentDescription, imageUrl }: CardComponentProps) => {
+const Card = ({ contentTitle, contentDescription, imageUrl, contentUrl }: CardComponentProps) => {
     return (
-        <div className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white p-6">
+        <div className="max-w-lg rounded-lg overflow-hidden shadow-lg sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl bg-white p-6">
             {/* Image */}
             {imageUrl && (
                 <img src={imageUrl} alt={contentTitle} className="w-full h-48 object-cover mb-4 rounded-md" />
@@ -36,10 +38,6 @@ const Card = ({ contentTitle, contentDescription, imageUrl }: CardComponentProps
                 </div>
             )} */}
 
-            {/* View Button */}
-            <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 w-full mt-4">
-                View Bookmark
-            </button>
         </div>
     );
 };

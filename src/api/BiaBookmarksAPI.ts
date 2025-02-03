@@ -12,7 +12,6 @@ export const createBookmark = async (user_id: string, token: string | null = "",
                 "Authorization": `Bearer ${token}`,  // Pass JWT token in the Authorization header
             }
         });
-        console.log(response);
 
         if (response) {
             return response;
@@ -27,12 +26,13 @@ export const createBookmark = async (user_id: string, token: string | null = "",
     }
 }
 
-export const deleteBookmark = async (user_id: string) => {
+export const deleteBookmark = async (user_id: string, token: string) => {
     try {
         const res = await fetch(`${api_link}/${user_id}/bookmarks/getBookmarks`, {
             "method": "GET",
             "headers": {
-                'Content-Type': 'application/json',
+                "Content-type": "application/json; charset=UTF-8",
+                "Authorization": `Bearer ${token}`,  // Pass JWT token in the Authorization header
             }
         });
         if (res.status === 200) {
@@ -47,12 +47,13 @@ export const deleteBookmark = async (user_id: string) => {
     }
 }
 
-export const fetchBookmarks = async (user_id: string) => {
+export const getBookmarks = async (user_id: string, token: string) => {
     try {
         const res = await fetch(`${api_link}/${user_id}/bookmarks/getBookmarks`, {
             "method": "GET",
             "headers": {
-                'Content-Type': 'application/json',
+                "Content-type": "application/json; charset=UTF-8",
+                "Authorization": `Bearer ${token}`,  // Pass JWT token in the Authorization header
             }
         });
         if (res.status === 200) {

@@ -33,7 +33,7 @@ const Login = () => {
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h1 className='mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900"'>💩</h1>
+        <h1 className='mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900"'>💩 Bookmarks</h1>
         <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
       </div>
 
@@ -67,9 +67,9 @@ const Login = () => {
                 required
                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
             </div>
-            <div className="text-sm mt-2 flex justify-end">
+            {/* <div className="text-sm mt-2 flex justify-end">
               <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>
-            </div>
+            </div> */}
           </div>
 
           <div>
@@ -84,7 +84,7 @@ const Login = () => {
         </form>
 
         <p className="mt-10 text-center text-sm/6 text-gray-500">
-          Don't have an account? <Link to="/signup">Sign Up</Link>
+          Don't have an account? <Link to="/signup" className='font-semibold text-indigo-600 hover:text-indigo-500'>Sign Up</Link>
         </p>
         {error && <p className='text-red-600 text-center pt-4'>{error}</p>}
       </div>

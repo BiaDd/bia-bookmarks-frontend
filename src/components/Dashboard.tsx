@@ -1,14 +1,21 @@
 import { UserAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { createBookmark } from '../api/BiaBookmarksAPI';
-import { useState } from 'react';
+import { createBookmark, getBookmarks } from '../api/BiaBookmarksAPI';
+import { useEffect, useState } from 'react';
 import FormModal from './FormModal';
-import Card from './Card';
+
+import CardGrid from './CardGrid';
+import Header from './Header';
 // import Navbar from './Navbar';
 
 const Dashboard = () => {
   const { session, signOutUser } = UserAuth();
   const [isCreateBookmarkModalOpen, setIsCreateBookmarkModalOpen] = useState(false);
+  const [userBookmarks, setUserBookmarks] = useState([]);
+
+  useEffect(() => {
+    handleGetBookmarks();
+  }, [])
 
   const navigate = useNavigate();
 
@@ -24,22 +31,31 @@ const Dashboard = () => {
 
   const handleAddBookmark = async (properties: any) => {
     try {
-      const result = await createBookmark(session?.user?.id, sessionStorage.getItem("jwt_token"), properties);
-      
-      console.log(result);
+      const result = await createBookmark(session?.user?.id, session?.access_token, properties);
+
+      // close modal and show success
+
     } catch (error) {
       console.error("Error adding bookmark: ", error);
+    }
+  }
+
+  const handleGetBookmarks = async () => {
+    try {
+      const result = await getBookmarks(session?.user?.id, session?.access_token);
+
+      setUserBookmarks(result.bookmarks);
+    } catch (error) {
+      console.error("Error getting bookmarks: ", error);
     }
   }
 
   return (
     <div>
       <div>
-        {/* <Navbar signOut={handleSignout} /> */}
-        <h2>Welcome {session?.user?.email}</h2>
-        <p onClick={handleSignout} className='hover:cursor-pointer border inline-block px-4 py-3 mt-4'>Sign out</p>
-        <h3>Here are your bookmarks <button onClick={() => { setIsCreateBookmarkModalOpen(true) }} className='rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>Add Bookmark+</button></h3>
-        <Card imageUrl="" contentTitle='hello' contentDescription='hi' />
+        <Header />
+        <button onClick={() => { setIsCreateBookmarkModalOpen(true) }} className='rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>Add Bookmark+</button>
+        <CardGrid items={userBookmarks} />
       </div>
       {isCreateBookmarkModalOpen &&
         <FormModal modalTitle="Create Bookmark"
