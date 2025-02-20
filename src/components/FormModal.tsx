@@ -1,12 +1,9 @@
 'use client'
-
-import { useState } from 'react'
-
 /**
  * Component properties
  */
 interface ModalComponentProps {
-  modalTitle: string,
+  bookmarkInfo: any,
   isOpen: boolean,
   onClose: () => void,
   onSubmit: (data: FormProps) => Promise<void>
@@ -17,100 +14,44 @@ interface FormProps {
   content_title: string,
   content_description: string,
   content_thumbnail_url: string,
-  tags: string[]
 }
 
-export default function Modal({ modalTitle, isOpen, onClose, onSubmit }: ModalComponentProps) {
+export default function Modal({ bookmarkInfo, isOpen, onClose, onSubmit }: ModalComponentProps) {
   if (!isOpen) return null; // Don't render the modal if it's closed
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [contentUrl, setContentUrl] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
-
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
     onSubmit({
-      content_title: title,
-      content_description: description,
-      content_thumbnail_url: imageUrl,
-      content_url: contentUrl,
-      tags: tags
+      content_url: "",
+      content_title: bookmarkInfo.title,
+      content_description: bookmarkInfo.description,
+      content_thumbnail_url: bookmarkInfo.coverUrl ?? ""
     });
     onClose(); // Close the modal after submitting
   };
 
-  // const createTags = (e: any) => {
-  //   e.preventDefault();
-  // }
-
-
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div> 
-      <div className="relative bg-white rounded-lg shadow-lg p-6 w-96 z-50">
-        <button onClick={onClose} className="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+      <div className="relative bg-white rounded-lg shadow-lg p-6 z-50 max-h-6xl max-w-5xl">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl"
+        >
           &times;
         </button>
-        <h2 className="text-2xl font-bold mb-4">{modalTitle}</h2>
+        {bookmarkInfo.coverUrl && (
+          <img
+            src={bookmarkInfo.coverUrl}
+            alt={bookmarkInfo.title}
+            className="w-full h-32 object-cover rounded"
+          />
+        )}
+        <h2 className="text-2xl font-bold mb-4">{bookmarkInfo.title}</h2>
+        <div className="max-h-60">
+          <p className="text-sm mt-2">{bookmarkInfo.description}</p>
+        </div>
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="contentUrl" className="block text-gray-700">Content Link</label>
-            <input
-              type="url"
-              id="contentUrl"
-              value={contentUrl}
-              onChange={(e) => setContentUrl(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="title" className="block text-gray-700">Title</label>
-            <input
-              type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="description" className="block text-gray-700">Description</label>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="contentUrl" className="block text-gray-700">Image Link</label>
-            <input
-              type="url"
-              id="imageUrl"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* <div className="mb-4">
-            <label htmlFor="tags" className="block text-gray-700">Tags</label>
-            <input
-              type="text"
-              id="tags"
-              value={tags}
-              onChange={(e) => {}}
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div> */}
-
           <div className="flex justify-end space-x-4">
             <button
               type="button"
@@ -123,7 +64,7 @@ export default function Modal({ modalTitle, isOpen, onClose, onSubmit }: ModalCo
               type="submit"
               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
             >
-              Submit
+              Add Bookmark
             </button>
           </div>
         </form>
