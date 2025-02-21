@@ -57,11 +57,15 @@ const Dashboard = () => {
               ? `https://uploads.mangadex.org/covers/${manga.id}/${coverFileName}`
               : null;
 
+          const mangaId = data.data[0].id; // Get the first manga's ID
+          const mangaUrl = `https://mangadex.org/title/${mangaId}`;
+
           return {
             id: manga.id,
             title: manga.attributes.title.en || "No English Title",
             description: manga.attributes.description.en || "No English Description Available",
-            coverUrl: coverUrl
+            coverUrl: coverUrl,
+            contentUrl: mangaUrl
           }
         }))
       }
@@ -77,6 +81,11 @@ const Dashboard = () => {
     setIsBookmarkModalOpen(true);
   }
 
+  const handleCloseModal = () => {
+    handleGetBookmarks();
+    setIsBookmarkModalOpen(false);
+  }
+
   return (
     <div>
       <div>
@@ -84,8 +93,8 @@ const Dashboard = () => {
         <label htmlFor="search" className="block text-sm/6 font-medium text-gray-900">Search: </label>
         <input id='search' name='search' type='text' value={mangaName} onChange={(e) => setMangaName(e.target.value)} className='border p-2 flex-1 rounded' />
         <button onClick={searchManga} className='bg-blue-500 text-white px-4 py-2 rounded'>Search</button>
-        <div id="manga-list" className="flex justify-center">
-          <ul className='max-w-4xl'>
+        <div id="manga-list" className="flex justify-center w-full max-h-69 overflow-y-auto border rounded-lg shadow p-2 mt-5">
+          <ul className='w-full max-h-69 pl-10 pr-10'>
             {mangaResults?.length > 0 ? mangaResults.map((manga: any) => (
               <li onClick={() => loadMangaInfo(manga)} key={manga.id} className="border-b py-2 flex flex-row trunc items-center">
                 <h3 className="font-bold flex whitespace-nowrap">{manga.title}</h3>
@@ -102,7 +111,7 @@ const Dashboard = () => {
       {isBookmarkModalOpen &&
         <FormModal bookmarkInfo={bookmarkInfo}
           isOpen={isBookmarkModalOpen}
-          onClose={() => { setIsBookmarkModalOpen(false) }}
+          onClose={handleCloseModal}
           onSubmit={handleAddBookmark} />}
     </div>
   )

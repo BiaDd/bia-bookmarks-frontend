@@ -22,7 +22,7 @@ export default function Modal({ bookmarkInfo, isOpen, onClose, onSubmit }: Modal
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     onSubmit({
-      content_url: "",
+      content_url: bookmarkInfo.contentUrl,
       content_title: bookmarkInfo.title,
       content_description: bookmarkInfo.description,
       content_thumbnail_url: bookmarkInfo.coverUrl ?? ""
@@ -36,20 +36,26 @@ export default function Modal({ bookmarkInfo, isOpen, onClose, onSubmit }: Modal
       <div className="relative bg-white rounded-lg shadow-lg p-6 z-50 max-h-6xl max-w-5xl">
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl"
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-3xl"
         >
           &times;
         </button>
-        {bookmarkInfo.coverUrl && (
-          <img
-            src={bookmarkInfo.coverUrl}
-            alt={bookmarkInfo.title}
-            className="w-full h-32 object-cover rounded"
-          />
-        )}
-        <h2 className="text-2xl font-bold mb-4">{bookmarkInfo.title}</h2>
-        <div className="max-h-60">
-          <p className="text-sm mt-2">{bookmarkInfo.description}</p>
+        <div className="flex max-w-[150vh] max-h-[60vh]">
+          {bookmarkInfo.coverUrl && (
+            <div className="w-1/3 md:w-1/3 h-auto flex justify-center">
+              <img
+                src={bookmarkInfo.coverUrl}
+                alt={bookmarkInfo.title}
+                className="max-h-full w-auto h-auto object-cover rounded"
+              />
+            </div>
+          )}
+          <div className="w-2/3 md:w-2/3 p-6 flex flex-col">
+            <h2 className="text-2xl font-bold mb-4">{bookmarkInfo.title}</h2>
+            <div className="max-h-60 overflow-y-auto">
+              <p className="text-sm mt-2">{bookmarkInfo.description}</p>
+            </div>
+          </div>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="flex justify-end space-x-4">
