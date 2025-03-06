@@ -1,5 +1,4 @@
 import { UserAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import { createBookmark, getBookmarks } from '../api/BiaBookmarksAPI';
 import { useEffect, useState } from 'react';
 import FormModal from './FormModal';
@@ -15,6 +14,7 @@ const Dashboard = () => {
   const [mangaName, setMangaName] = useState("");
   const [mangaResults, setMangaResults] = useState([]);
   const [bookmarkInfo, setBookmarkInfo] = useState(null);
+  const [isAddBookmarkModal, setIsAddBookmarkModal] = useState(false);
 
   useEffect(() => {
     handleGetBookmarks();
@@ -53,19 +53,18 @@ const Dashboard = () => {
         setMangaResults(data.data.map((manga: any) => {
           const cover = manga.relationships.find((rel: any) => rel.type === "cover_art");
           const coverFileName = cover?.attributes?.fileName;
-          const coverUrl = coverFileName 
-              ? `https://uploads.mangadex.org/covers/${manga.id}/${coverFileName}`
-              : null;
+          const coverUrl = coverFileName
+            ? `https://uploads.mangadex.org/covers/${manga.id}/${coverFileName}`
+            : null;
 
-          const mangaId = data.data[0].id; // Get the first manga's ID
-          const mangaUrl = `https://mangadex.org/title/${mangaId}`;
+          const mangaUrl = `https://mangadex.org/title/${manga.id}`;
 
           return {
             id: manga.id,
             title: manga.attributes.title.en || "No English Title",
             description: manga.attributes.description.en || "No English Description Available",
-            coverUrl: coverUrl,
-            contentUrl: mangaUrl
+            image_url: coverUrl,
+            url: mangaUrl
           }
         }))
       }
@@ -76,7 +75,8 @@ const Dashboard = () => {
     }
   }
 
-  const loadMangaInfo = async (manga: any) => {
+  const loadMangaInfo = (manga: any, isAddBookmark: boolean) => {
+    setIsAddBookmarkModal(isAddBookmark)
     setBookmarkInfo(manga)
     setIsBookmarkModalOpen(true);
   }
@@ -96,7 +96,7 @@ const Dashboard = () => {
         <div id="manga-list" className="flex justify-center w-full max-h-69 overflow-y-auto border rounded-lg shadow p-2 mt-5">
           <ul className='w-full max-h-69 pl-10 pr-10'>
             {mangaResults?.length > 0 ? mangaResults.map((manga: any) => (
-              <li onClick={() => loadMangaInfo(manga)} key={manga.id} className="border-b py-2 flex flex-row trunc items-center">
+              <li onClick={() => loadMangaInfo(manga, true)} key={manga.id} className="border-b py-2 flex flex-row trunc items-center">
                 <h3 className="font-bold flex whitespace-nowrap">{manga.title}</h3>
                 <p className="text-sm ml-3 truncate">{manga.description}</p>
               </li>
@@ -106,13 +106,14 @@ const Dashboard = () => {
               </li>}
           </ul>
         </div>
-        {userBookmarks?.length ? <CardGrid items={userBookmarks} /> : <p>Nothing added yet!</p>}
+        {userBookmarks?.length ? <CardGrid items={userBookmarks} cardOnClick={loadMangaInfo} /> : <p>Nothing added yet!</p>}
       </div>
       {isBookmarkModalOpen &&
         <FormModal bookmarkInfo={bookmarkInfo}
           isOpen={isBookmarkModalOpen}
           onClose={handleCloseModal}
-          onSubmit={handleAddBookmark} />}
+          onSubmit={handleAddBookmark}
+          isAddBookmarkModal={isAddBookmarkModal} />}
     </div>
   )
 }

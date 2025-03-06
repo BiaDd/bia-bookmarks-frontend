@@ -6,7 +6,8 @@ interface ModalComponentProps {
   bookmarkInfo: any,
   isOpen: boolean,
   onClose: () => void,
-  onSubmit: (data: FormProps) => Promise<void>
+  onSubmit: (data: FormProps) => Promise<void>,
+  isAddBookmarkModal: boolean
 }
 
 interface FormProps {
@@ -16,16 +17,18 @@ interface FormProps {
   content_thumbnail_url: string,
 }
 
-export default function Modal({ bookmarkInfo, isOpen, onClose, onSubmit }: ModalComponentProps) {
+export default function Modal({ bookmarkInfo, isOpen, onClose, onSubmit, isAddBookmarkModal }: ModalComponentProps) {
   if (!isOpen) return null; // Don't render the modal if it's closed
+
+  console.log(bookmarkInfo);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     onSubmit({
-      content_url: bookmarkInfo.contentUrl,
+      content_url: bookmarkInfo.url,
       content_title: bookmarkInfo.title,
       content_description: bookmarkInfo.description,
-      content_thumbnail_url: bookmarkInfo.coverUrl ?? ""
+      content_thumbnail_url: bookmarkInfo.image_url ?? ""
     });
     onClose(); // Close the modal after submitting
   };
@@ -41,22 +44,24 @@ export default function Modal({ bookmarkInfo, isOpen, onClose, onSubmit }: Modal
           &times;
         </button>
         <div className="flex max-w-[150vh] max-h-[60vh]">
-          {bookmarkInfo.coverUrl && (
+          {bookmarkInfo.image_url && (
             <div className="w-1/3 md:w-1/3 h-auto flex justify-center">
               <img
-                src={bookmarkInfo.coverUrl}
+                src={bookmarkInfo.image_url}
                 alt={bookmarkInfo.title}
                 className="max-h-full w-auto h-auto object-cover rounded"
               />
             </div>
           )}
           <div className="w-2/3 md:w-2/3 p-6 flex flex-col">
-            <h2 className="text-2xl font-bold mb-4">{bookmarkInfo.title}</h2>
+            <a href={bookmarkInfo.url} target="_blank" className="text-2xl font-bold mb-4">{bookmarkInfo.title}</a>
             <div className="max-h-60 overflow-y-auto">
               <p className="text-sm mt-2">{bookmarkInfo.description}</p>
             </div>
           </div>
         </div>
+
+        
         <form onSubmit={handleSubmit}>
           <div className="flex justify-end space-x-4">
             <button
@@ -70,7 +75,7 @@ export default function Modal({ bookmarkInfo, isOpen, onClose, onSubmit }: Modal
               type="submit"
               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
             >
-              Add Bookmark
+              {isAddBookmarkModal ? "Add Bookmark" : "Update Bookmark"}
             </button>
           </div>
         </form>

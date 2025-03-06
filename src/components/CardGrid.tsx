@@ -1,30 +1,20 @@
-import React from 'react'
 import Card from './Card';
 
 interface CardGrid {
-    items: BookmarkProps[]
-}
-
-interface BookmarkProps {
-    url: string,
-    title: string,
-    description: string,
-    image_url: string,
-    tags: string[]
+    items: any[]
+    cardOnClick: (bookmark: any, isAddBookmark: boolean) => void
 }
 
 
-const CardGrid = ({ items }: CardGrid) => {
+const CardGrid = ({ items, cardOnClick }: CardGrid) => {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-4">
-            {items.map((item: BookmarkProps, index: number) => (
+            {items.map((bookmark: any, index: number) => (
                 <li key={index} className='list-none'>
                     <Card
                         key={index}
-                        contentUrl={item.url}
-                        contentTitle={item.title}
-                        contentDescription={item.description}
-                        imageUrl={item.image_url}
+                        bookmark={bookmark}
+                        cardOnClick={() => cardOnClick(bookmark, false)}
                     />
                 </li>
             ))}
