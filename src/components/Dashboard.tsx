@@ -15,6 +15,7 @@ const Dashboard = () => {
   const [mangaResults, setMangaResults] = useState([]);
   const [bookmarkInfo, setBookmarkInfo] = useState(null);
   const [isAddBookmarkModal, setIsAddBookmarkModal] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   // const [IsConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
   useEffect(() => {
@@ -61,16 +62,15 @@ const Dashboard = () => {
 
   const searchManga = async () => {
     if (!mangaName.trim()) return;
-
     try {
       const result = await searchMangaApi(session?.user?.id, mangaName, session?.access_token);
-
       console.log("manga search results", result);
       setMangaResults(result);
     }
     catch (error) {
       console.error("Error finding manga: ", error);
     }
+    setHasSearched(true);
   }
 
   const loadMangaInfo = (manga: any, isAddBookmark: boolean) => {
@@ -94,7 +94,7 @@ const Dashboard = () => {
         <label htmlFor="search" className="block text-sm/6 font-medium text-gray-900">Search: </label>
         <input id='search' name='search' type='text' value={mangaName} onChange={(e) => setMangaName(e.target.value)} className='border p-2 flex-1 rounded' />
         <button onClick={searchManga} className='bg-blue-500 text-white px-4 py-2 rounded'>Search</button>
-        <div id="manga-list" className="flex justify-center w-full max-h-69 overflow-y-auto border rounded-lg shadow p-2 mt-5">
+        {hasSearched ? <div id="manga-list" className="flex justify-center w-full max-h-69 overflow-y-auto border rounded-lg shadow p-2 mt-5">
           <ul className='w-full max-h-69 pl-10 pr-10'>
             {mangaResults?.length > 0 ? mangaResults.map((manga: any) => (
               <li onClick={() => loadMangaInfo(manga, true)} key={manga.id} className="border-b py-2 flex flex-row trunc items-center">
@@ -106,7 +106,7 @@ const Dashboard = () => {
                 No results found
               </li>}
           </ul>
-        </div>
+        </div> : <></>}
         {userBookmarks?.length ? <CardGrid items={userBookmarks} cardOnClick={loadMangaInfo} cardActions={cardActions} /> : <p>Nothing added yet!</p>}
       </div>
       {isBookmarkModalOpen &&
