@@ -9,6 +9,7 @@ interface CardComponentProps {
     cardActions: any
 }
 
+
 const Card = ({ bookmark, cardOnClick, cardActions }: CardComponentProps) => {
     return (
 
@@ -18,7 +19,7 @@ const Card = ({ bookmark, cardOnClick, cardActions }: CardComponentProps) => {
             }
             {/* Image */}
             {bookmark.image_url && (
-                <img src={`${import.meta.env.VITE_APP_BACKEND_API}/mangadex-cover?url=${encodeURIComponent(bookmark.image_url)}`} alt={bookmark.title} className="w-full h-48 object-cover mb-4 rounded-md" />
+                <img src={bookmark.image_url} alt={bookmark.title} className="w-full h-48 object-cover mb-4 rounded-md" />
             )}
 
             {/* Title */}
