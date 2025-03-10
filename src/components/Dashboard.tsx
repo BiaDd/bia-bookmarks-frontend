@@ -1,5 +1,5 @@
 import { UserAuth } from '../context/AuthContext';
-import { createBookmark, getBookmarks } from '../api/BiaBookmarksAPI';
+import { createBookmark, deleteBookmark, getBookmarks } from '../api/BiaBookmarksAPI';
 import { useEffect, useState } from 'react';
 import FormModal from './FormModal';
 
@@ -15,6 +15,7 @@ const Dashboard = () => {
   const [mangaResults, setMangaResults] = useState([]);
   const [bookmarkInfo, setBookmarkInfo] = useState(null);
   const [isAddBookmarkModal, setIsAddBookmarkModal] = useState(false);
+  // const [IsConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
   useEffect(() => {
     handleGetBookmarks();
@@ -25,9 +26,26 @@ const Dashboard = () => {
       const result = await createBookmark(session?.user?.id, session?.access_token, properties);
 
       // close modal and show success
+      if (result) {
+        setIsBookmarkModalOpen(false);
+      }
 
     } catch (error) {
       console.error("Error adding bookmark: ", error);
+    }
+  }
+
+  const handleDeleteBookmark = async (bookmarkInfo: any) => {
+    try {
+      const result = await deleteBookmark(session?.user?.id, bookmarkInfo.id, session?.access_token)
+
+      if (result) {
+        // setIsConfirmationModalOpen(false);
+        handleGetBookmarks();
+      }
+    }
+    catch (ex) {
+      console.error("Error deleting bookmark: ", ex)
     }
   }
 
@@ -86,6 +104,9 @@ const Dashboard = () => {
     setIsBookmarkModalOpen(false);
   }
 
+  // Group actions in an object
+  const cardActions = { deleteBookmark: handleDeleteBookmark };
+
   return (
     <div>
       <div>
@@ -106,7 +127,7 @@ const Dashboard = () => {
               </li>}
           </ul>
         </div>
-        {userBookmarks?.length ? <CardGrid items={userBookmarks} cardOnClick={loadMangaInfo} /> : <p>Nothing added yet!</p>}
+        {userBookmarks?.length ? <CardGrid items={userBookmarks} cardOnClick={loadMangaInfo} cardActions={cardActions} /> : <p>Nothing added yet!</p>}
       </div>
       {isBookmarkModalOpen &&
         <FormModal bookmarkInfo={bookmarkInfo}
