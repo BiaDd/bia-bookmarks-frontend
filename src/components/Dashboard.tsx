@@ -1,5 +1,5 @@
 import { UserAuth } from '../context/AuthContext';
-import { createBookmark, deleteBookmark, getBookmarks } from '../api/BiaBookmarksAPI';
+import { createBookmark, deleteBookmark, getBookmarks, searchMangaApi } from '../api/BiaBookmarksAPI';
 import { useEffect, useState } from 'react';
 import FormModal from './FormModal';
 
@@ -61,35 +61,15 @@ const Dashboard = () => {
 
   const searchManga = async () => {
     if (!mangaName.trim()) return;
-    const url = `https://api.mangadex.org/manga?title=${encodeURIComponent(mangaName)}&includes[]=cover_art`;
 
     try {
-      const response = await fetch(url);
-      const data = await response.json();
+      const result = await searchMangaApi(session?.user?.id, mangaName, session?.access_token);
 
-      if (data && data.data) {
-        setMangaResults(data.data.map((manga: any) => {
-          const cover = manga.relationships.find((rel: any) => rel.type === "cover_art");
-          const coverFileName = cover?.attributes?.fileName;
-          const coverUrl = coverFileName
-            ? `https://uploads.mangadex.org/covers/${manga.id}/${coverFileName}`
-            : null;
-
-          const mangaUrl = `https://mangadex.org/title/${manga.id}`;
-
-          return {
-            id: manga.id,
-            title: manga.attributes.title.en || "No English Title",
-            description: manga.attributes.description.en || "No English Description Available",
-            image_url: coverUrl,
-            url: mangaUrl
-          }
-        }))
-      }
-
-    } catch (error) {
-      console.error("Error fetching manga:", error);
-      return [];
+      console.log("manga search results", result);
+      setMangaResults(result);
+    }
+    catch (error) {
+      console.error("Error finding manga: ", error);
     }
   }
 

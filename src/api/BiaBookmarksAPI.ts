@@ -86,3 +86,26 @@ export const getBookmarks = async (user_id: string, token: string) => {
         return false;
     }
 }
+
+/**
+ * Searches a manga given the manga name
+ * @param manga_name 
+ * @returns 
+ */
+export const searchMangaApi = async (user_id: string, manga_name: string, token: string) => {
+    try {
+        const response = await fetch(`${api_link}/${user_id}/searchManga?title=${encodeURIComponent(manga_name)}`, {
+            "method": "GET",
+            "headers": {
+                "Content-type": "application/json; charset=UTF-8",
+                "Authorization": `Bearer ${token}`,  // Pass JWT token in the Authorization header
+            }
+        });
+        const data = await response.json();
+        
+        return data.data;
+    } catch (error) {
+        console.error("Error fetching manga:", error);
+        return [];
+    }
+}
